@@ -1,0 +1,16 @@
+name: Tests
+on: push
+jobs:
+  actions:
+    runs-on: ubuntu-latest
+    env:
+      github_sha: ${{ github.sha }}
+    steps:
+    - name: Copia repositorio
+      uses: actions/checkout@v2
+    - name: Construye imagen
+      run: docker build --tag tesis/synth:latest --tag tesis/synth:${github_sha:0:4} .
+    - name: Verifica el formato
+      run: docker run tesis/synth:latest make check
+    - name: Corre pruebas y evalúa cobertura
+      run: docker run tesis/synth:latest make coverage
